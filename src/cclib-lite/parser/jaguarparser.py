@@ -12,7 +12,7 @@ __revision__ = "$Revision: 1040 $"
 
 import re
 
-import numpy
+import multiarray
 
 import logfileparser
 import utils
@@ -121,7 +121,7 @@ class Jaguar(logfileparser.Logfile):
                 atomcoords.append(map(float, temp[1:]))
                 line = inputfile.next()
             self.atomcoords.append(atomcoords)
-            self.atomnos = numpy.array(atomnos, "i")
+            self.atomnos = multiarray.array(atomnos, "i")
             self.natom = len(atomcoords)
 
         # Extract charge and multiplicity
@@ -144,7 +144,7 @@ class Jaguar(logfileparser.Logfile):
         # Get Geometry Opt convergence information
             if not hasattr(self, "geovalues"):
                 self.geovalues = []
-                self.geotargets = numpy.zeros(5, "d")
+                self.geotargets = multiarray.zeros(5, "d")
             gopt_step = int(line.split()[-1])
             energy = inputfile.next()
             # quick hack for messages of the sort:
@@ -174,7 +174,7 @@ class Jaguar(logfileparser.Logfile):
             line = inputfile.next()
             virts = int(line.split()[-1])
             self.nmo = occs + virts
-            self.homos = numpy.array([occs-1], "i")
+            self.homos = multiarray.array([occs-1], "i")
 
             self.unrestrictedflag = False
 
@@ -190,7 +190,7 @@ class Jaguar(logfileparser.Logfile):
             bvirt = int(line.split()[-1])
 
             self.nmo = aoccs + avirts
-            self.homos = numpy.array([aoccs-1, boccs-1], "i")
+            self.homos = multiarray.array([aoccs-1, boccs-1], "i")
             self.unrestrictedflag = True
 
         # MO energies and symmetries.
@@ -278,7 +278,7 @@ class Jaguar(logfileparser.Logfile):
             offset = 0
 
             for s in range(spin):
-                mocoeffs = numpy.zeros((len(self.moenergies[s]), self.nbasis), "d")
+                mocoeffs = multiarray.zeros((len(self.moenergies[s]), self.nbasis), "d")
 
                 if s == 1: #beta case
                     stars = inputfile.next()
@@ -350,7 +350,7 @@ class Jaguar(logfileparser.Logfile):
                 return
                 # This was continue (in loop) before parser refactoring.
                 # continue # avoid "olap-dev"
-            self.aooverlaps = numpy.zeros((self.nbasis, self.nbasis), "d")
+            self.aooverlaps = multiarray.zeros((self.nbasis, self.nbasis), "d")
 
             for i in range(0, self.nbasis, 5):
                 if self.progress:
@@ -364,7 +364,7 @@ class Jaguar(logfileparser.Logfile):
                     self.aooverlaps[i:(i+len(temp)), j] = temp
             
         if line[1:28] == "number of occupied orbitals":
-            self.homos = numpy.array([float(line.strip().split()[-1])-1], "i")
+            self.homos = multiarray.array([float(line.strip().split()[-1])-1], "i")
 
         if line[2:27] == "number of basis functions":
             self.nbasis = int(line.strip().split()[-1])
@@ -441,10 +441,10 @@ class Jaguar(logfileparser.Logfile):
                 freqs = inputfile.next()
 
             # Convert new data to arrays.
-            self.vibfreqs = numpy.array(self.vibfreqs, "d")
-            self.vibdisps = numpy.array(self.vibdisps, "d")
+            self.vibfreqs = multiarray.array(self.vibfreqs, "d")
+            self.vibdisps = multiarray.array(self.vibdisps, "d")
             if hasattr(self, "vibirs"):
-                self.vibirs = numpy.array(self.vibirs, "d")
+                self.vibirs = multiarray.array(self.vibirs, "d")
                 
         # Parse excited state output (for CIS calculations).
         # Jaguar calculates only singlet states.

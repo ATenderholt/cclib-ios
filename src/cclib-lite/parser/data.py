@@ -10,7 +10,7 @@
 
 __revision__ = "$Revision: 992 $"
 
-import numpy
+import multiarray
 
 
 class ccData(object):
@@ -70,7 +70,7 @@ class ccData(object):
         temperature -- Tempature used for Thermochemistry (float kelvin)
         entropy -- Entropy (float hartree/particle)
         optdone -- Stores if an optimisation job has completed (boolean)
-    (1) The term 'array' refers to a numpy array
+    (1) The term 'array' refers to a multiarray array
     (2) The number of dimensions of an array is given in square brackets
     (3) Python indexes arrays/lists starting at zero, so if homos==[10], then
             the 11th molecular orbital is the HOMO
@@ -88,53 +88,53 @@ class ccData(object):
         # The expected types for all supported attributes in dectionary,
         # and their names which can be extracted as the keys.
         self._attrtypes = { "aonames":        list,
-                            "aooverlaps":     numpy.ndarray,
+                            "aooverlaps":     multiarray.arraytype,
                             "atombasis":      list,
                             "atomcharges":    dict,
-                            "atomcoords":     numpy.ndarray,
-                            "atommasses":     numpy.ndarray,
-                            "atomnos":        numpy.ndarray,
+                            "atomcoords":     multiarray.arraytype,
+                            "atommasses":     multiarray.arraytype,
+                            "atomnos":        multiarray.arraytype,
                             "atomspins":      dict,
-                            "ccenergies":     numpy.ndarray,
+                            "ccenergies":     multiarray.arraytype,
                             "charge":         int,
-                            "coreelectrons":  numpy.ndarray,
-                            "etenergies":     numpy.ndarray,
-                            "etoscs":         numpy.ndarray,
-                            "etrotats":       numpy.ndarray,
+                            "coreelectrons":  multiarray.arraytype,
+                            "etenergies":     multiarray.arraytype,
+                            "etoscs":         multiarray.arraytype,
+                            "etrotats":       multiarray.arraytype,
                             "etsecs":         list,
                             "etsyms":         list,
                             "fonames":        list,
-                            "fooverlaps":     numpy.ndarray,
+                            "fooverlaps":     multiarray.arraytype,
                             "fragnames":      list,
                             "frags":          list,
                             'gbasis':         list,
-                            "geotargets":     numpy.ndarray,
-                            "geovalues":      numpy.ndarray,
-                            "grads":          numpy.ndarray,
-                            "hessian":        numpy.ndarray,
-                            "homos":          numpy.ndarray,
+                            "geotargets":     multiarray.arraytype,
+                            "geovalues":      multiarray.arraytype,
+                            "grads":          multiarray.arraytype,
+                            "hessian":        multiarray.arraytype,
+                            "homos":          multiarray.arraytype,
                             "mocoeffs":       list,
                             "moenergies":     list,
                             "mosyms":         list,
-                            "mpenergies":     numpy.ndarray,
+                            "mpenergies":     multiarray.arraytype,
                             "mult":           int,
                             "natom":          int,
                             "nbasis":         int,
                             "nmo":            int,
-                            "nocoeffs":       numpy.ndarray,
-                            "scfenergies":    numpy.ndarray,
-                            "scftargets":     numpy.ndarray,
+                            "nocoeffs":       multiarray.arraytype,
+                            "scfenergies":    multiarray.arraytype,
+                            "scftargets":     multiarray.arraytype,
                             "scfvalues":      list,
-                            "vibanharms":     numpy.ndarray,
-                            "vibdisps":       numpy.ndarray,
-                            "vibfreqs":       numpy.ndarray,
-                            "vibirs":         numpy.ndarray,
-                            "vibramans":      numpy.ndarray,
+                            "vibanharms":     multiarray.arraytype,
+                            "vibdisps":       multiarray.arraytype,
+                            "vibfreqs":       multiarray.arraytype,
+                            "vibirs":         multiarray.arraytype,
+                            "vibramans":      multiarray.arraytype,
                             "vibsyms":        list,
                             "scannames":      list,
                             "scanenergies":   list,
                             "scanparm":       list,
-                            "scancoords":     numpy.ndarray,
+                            "scancoords":     multiarray.arraytype,
                             "enthaply":       float,
                             "freeenergy":     float,
                             "temperature":    float,
@@ -178,7 +178,7 @@ class ccData(object):
         attrlist = [k for k in self._attrlist if hasattr(self, k)]
         for k in attrlist:
             v = self._attrtypes[k]
-            if v == numpy.ndarray:
+            if v == multiarray.arraytype:
                 setattr(self, k, getattr(self, k).tolist())
             elif v == list and k in self._listsofarrays:
                 setattr(self, k, [x.tolist() for x in getattr(self, k)])
@@ -196,13 +196,13 @@ class ccData(object):
             precision = 'd'
             if k in self._intarrays:
                 precision = 'i'
-            if v == numpy.ndarray:
-                setattr(self, k, numpy.array(getattr(self, k), precision))
+            if v == multiarray.arraytype:
+                setattr(self, k, multiarray.array(getattr(self, k), precision))
             elif v == list and k in self._listsofarrays:
-                setattr(self, k, [numpy.array(x, precision) for x in getattr(self, k)])
+                setattr(self, k, [multiarray.array(x, precision) for x in getattr(self, k)])
             elif v == dict and k in self._dictsofarrays:
                 items = getattr(self, k).iteritems()
-                pairs = [(key, numpy.array(val, precision)) for key, val in items]
+                pairs = [(key, multiarray.array(val, precision)) for key, val in items]
                 setattr(self, k, dict(pairs))
 
     def getattributes(self, tolists=False):

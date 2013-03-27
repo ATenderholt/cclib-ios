@@ -31,7 +31,7 @@ import sys
 import types
 import zipfile
 
-import numpy
+import multiarray
 
 import utils
 from data import ccData
@@ -152,7 +152,7 @@ class Logfile(object):
                     
             # Call logger.info() only if the attribute is new.
             if not hasattr(self, name):
-                if type(value) in [numpy.ndarray, list]:
+                if type(value) in [multiarray.arraytype, list]:
                     self.logger.info("Creating attribute %s[]" %name)
                 else:
                     self.logger.info("Creating attribute %s: %s" %(name, str(value)))
@@ -228,7 +228,7 @@ class Logfile(object):
         # If atomcoords were not parsed, but some input coordinates were ("inputcoords").
         # This is originally from the Gaussian parser, a regression fix.
         if not hasattr(self, "atomcoords") and hasattr(self, "inputcoords"):
-            self.atomcoords = numpy.array(self.inputcoords, 'd')
+            self.atomcoords = multiarray.array(self.inputcoords, 'd')
 
         # Set nmo if not set already - to nbasis.
         if not hasattr(self, "nmo") and hasattr(self, "nbasis"):
@@ -236,7 +236,7 @@ class Logfile(object):
 
         # Creating deafult coreelectrons array.
         if not hasattr(self, "coreelectrons") and hasattr(self, "natom"):
-            self.coreelectrons = numpy.zeros(self.natom, "i")
+            self.coreelectrons = multiarray.zeros(self.natom, "i")
 
         # Move all cclib attributes to the ccData object.
         # To be moved, an attribute must be in data._attrlist.

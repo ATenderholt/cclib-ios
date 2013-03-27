@@ -10,7 +10,7 @@
 
 __revision__ = "$Revision: 992 $"
 
-import numpy
+import multiarray
 
 import logfileparser
 import utils
@@ -75,7 +75,7 @@ class Molpro(logfileparser.Logfile):
                 atomnos.append(int(round(float(columns[2]))))
                 line = inputfile.next()
                 
-            self.atomnos = numpy.array(atomnos, "i")
+            self.atomnos = multiarray.array(atomnos, "i")
             self.atomcoords.append(atomcoords)
             self.natom = len(self.atomnos)
         
@@ -173,7 +173,7 @@ class Molpro(logfileparser.Logfile):
             spinup = int(line.split()[3][:-1])
             spindown = int(line.split()[4][:-1])
             # Nuclear charges (atomnos) should be parsed by now.
-            nuclear = numpy.sum(self.atomnos)
+            nuclear = multiarray.sum(self.atomnos)
             charge = nuclear - spinup - spindown
             mult = spinup - spindown + 1
             
@@ -227,7 +227,7 @@ class Molpro(logfileparser.Logfile):
                     # The convergence thresholds must have been read above.
                     # Presently, we recognize MAX DENSITY and MAX ENERGY thresholds.
                     numtargets = len(self.scftargetnames)
-                    values = [numpy.nan]*numtargets
+                    values = [multiarray.nan]*numtargets
                     for n, name in zip(range(numtargets), self.scftargetnames):
                         if "ENERGY" in name.upper():
                             values[n] = ediff
@@ -236,7 +236,7 @@ class Molpro(logfileparser.Logfile):
                     scfvalues.append(values)
 
                 line = inputfile.next()
-            self.scfvalues.append(numpy.array(scfvalues))
+            self.scfvalues.append(multiarray.array(scfvalues))
 
         # SCF result - RHF/UHF and DFT (RKS) energies.
         if line[1:5] in ["!RHF", "!UHF", "!RKS"] and line[16:22] == "ENERGY":

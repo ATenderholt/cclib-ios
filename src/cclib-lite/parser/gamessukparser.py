@@ -12,7 +12,7 @@ __revision__ = "$Revision: 1040 $"
 
 import re
 
-import numpy
+import multiarray
 
 import logfileparser
 import utils
@@ -124,7 +124,7 @@ class GAMESSUK(logfileparser.Logfile):
                 # before the row of coordinate data
             
             self.atomcoords.append(atomcoords)
-            self.atomnos = numpy.array(self.atomnos, "i")
+            self.atomnos = multiarray.array(self.atomnos, "i")
 
         if line[40:59] == "nuclear coordinates":
             # We need not remember the first geometry in the geo-opt as this will
@@ -173,12 +173,12 @@ class GAMESSUK(logfileparser.Logfile):
             alpha = int(inputfile.next().split()[-1])-1
             beta = int(inputfile.next().split()[-1])-1
             if self.mult == 1:
-                self.homos = numpy.array([alpha], "i")
+                self.homos = multiarray.array([alpha], "i")
             else:
-                self.homos = numpy.array([alpha, beta], "i")
+                self.homos = multiarray.array([alpha, beta], "i")
 
         if line[37:69] == "s-matrix over gaussian basis set":
-            self.aooverlaps = numpy.zeros((self.nbasis, self.nbasis), "d")
+            self.aooverlaps = multiarray.zeros((self.nbasis, self.nbasis), "d")
 
             minus = inputfile.next()
             blank = inputfile.next()
@@ -200,7 +200,7 @@ class GAMESSUK(logfileparser.Logfile):
                 i += len(temp)
 
         if line[18:43] == 'EFFECTIVE CORE POTENTIALS':
-            self.coreelectrons = numpy.zeros(self.natom, 'i')
+            self.coreelectrons = multiarray.zeros(self.natom, 'i')
             asterisk = inputfile.next()
             line = inputfile.next()
             while line[15:46] != "*"*31:
@@ -439,7 +439,7 @@ class GAMESSUK(logfileparser.Logfile):
                 aonames = []
             minus = inputfile.next()
 
-            mocoeffs = numpy.zeros( (self.nmo, self.nbasis), "d")
+            mocoeffs = multiarray.zeros( (self.nmo, self.nbasis), "d")
             readatombasis = False
             if not hasattr(self, "atombasis"):
                 self.atombasis = []

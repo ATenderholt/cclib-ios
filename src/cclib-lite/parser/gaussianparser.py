@@ -12,7 +12,7 @@ __revision__ = "$Revision: 1026 $"
 
 import re
 
-import numpy
+import multiarray
 
 import logfileparser
 import utils
@@ -83,7 +83,7 @@ class Gaussian(logfileparser.Logfile):
         # a restricted calculation. The following has the
         # effect of including each transition twice.
         if hasattr(self, "etsecs") and len(self.homos) == 1:
-            new_etsecs = [[(x[0], x[1], x[2] * numpy.sqrt(2)) for x in etsec]
+            new_etsecs = [[(x[0], x[1], x[2] * multiarray.sqrt(2)) for x in etsec]
                           for etsec in self.etsecs]
             self.etsecs = new_etsecs
         if hasattr(self, "scanenergies"):
@@ -196,7 +196,7 @@ class Gaussian(logfileparser.Logfile):
             self.inputcoords.append(atomcoords)
 
             if not hasattr(self, "atomnos"):
-                self.atomnos = numpy.array(self.inputatoms, 'i')
+                self.atomnos = multiarray.array(self.inputatoms, 'i')
                 self.natom = len(self.atomnos)
 
         # Extract the atomic masses.
@@ -254,12 +254,12 @@ class Gaussian(logfileparser.Logfile):
             self.atomcoords.append(atomcoords)
 
             if not hasattr(self, "natom"):
-                self.atomnos = numpy.array(atomnos, 'i')
+                self.atomnos = multiarray.array(atomnos, 'i')
                 self.natom = len(self.atomnos)
 
             # make sure atomnos is added for the case where natom has already been set
             elif not hasattr(self, "atomnos"):
-                self.atomnos = numpy.array(atomnos, 'i')
+                self.atomnos = multiarray.array(atomnos, 'i')
 
         # Find the targets for SCF convergence (QM calcs).
         if line[1:44] == 'Requested convergence on RMS density matrix':
@@ -268,7 +268,7 @@ class Gaussian(logfileparser.Logfile):
                 self.scftargets = []
             # The following can happen with ONIOM which are mixed SCF
             # and semi-empirical
-            if type(self.scftargets) == type(numpy.array([])):
+            if type(self.scftargets) == type(multiarray.array([])):
                 self.scftargets = []
 
             scftargets = []
@@ -328,7 +328,7 @@ class Gaussian(logfileparser.Logfile):
         # Extract SCF convergence information (AM1 calcs).
         if line[1:4] == 'It=':
                     
-            self.scftargets = numpy.array([1E-7], "d") # This is the target value for the rms
+            self.scftargets = multiarray.array([1E-7], "d") # This is the target value for the rms
             self.scfvalues = [[]]
 
             line = inputfile.next()
@@ -430,7 +430,7 @@ class Gaussian(logfileparser.Logfile):
 
             if not hasattr(self, "geotargets"):
                 self.geovalues = []
-                self.geotargets = numpy.array([0.0, 0.0, 0.0, 0.0], "d")
+                self.geotargets = multiarray.array([0.0, 0.0, 0.0, 0.0], "d")
 
             newlist = [0]*4
             for i in range(4):
@@ -521,7 +521,7 @@ class Gaussian(logfileparser.Logfile):
             i = 0
             while len(line) > 18 and line[17] == '(':
                 if line.find('Virtual') >= 0:
-                    self.homos = numpy.array([i-1], "i") # 'HOMO' indexes the HOMO in the arrays
+                    self.homos = multiarray.array([i-1], "i") # 'HOMO' indexes the HOMO in the arrays
                 parts = line[17:].split()
                 for x in parts:
                     self.mosyms[0].append(self.normalisesym(x.strip('()')))
@@ -549,7 +549,7 @@ class Gaussian(logfileparser.Logfile):
                             self.homos[1] = i-1
                         else:
                             # 'HOMO' indexes the HOMO in the arrays
-                            self.homos = numpy.array([i-1], "i")
+                            self.homos = multiarray.array([i-1], "i")
                     parts = line[17:].split()
                     for x in parts:
                         self.mosyms[1].append(self.normalisesym(x.strip('()')))
@@ -578,7 +578,7 @@ class Gaussian(logfileparser.Logfile):
                     if hasattr(self, "homos"):
                         assert HOMO == self.homos[0]
                     else:
-                        self.homos = numpy.array([HOMO], "i")
+                        self.homos = multiarray.array([HOMO], "i")
 
                 # Convert to floats and append to moenergies, but sometimes Gaussian
                 #  doesn't print correctly so test for ValueError (bug 1756789).
@@ -589,7 +589,7 @@ class Gaussian(logfileparser.Logfile):
                     try:
                         x = self.float(s)
                     except ValueError:
-                        x = numpy.nan
+                        x = multiarray.nan
                     self.moenergies[0].append(utils.convertor(x, "hartree", "eV"))
                     i += 1
                 line = inputfile.next()
@@ -598,7 +598,7 @@ class Gaussian(logfileparser.Logfile):
             # any alpha virtual orbitals
             if not hasattr(self, "homos"):
                 HOMO = len(self.moenergies[0])-1
-                self.homos = numpy.array([HOMO], "i")
+                self.homos = multiarray.array([HOMO], "i")
             
 
             if line.find('Beta') == 2:
@@ -625,7 +625,7 @@ class Gaussian(logfileparser.Logfile):
                     i += 1
                 line = inputfile.next()
 
-            self.moenergies = [numpy.array(x, "d") for x in self.moenergies]
+            self.moenergies = [multiarray.array(x, "d") for x in self.moenergies]
             
         # Gaussian Rev <= B.0.3 (?)
         # AO basis set in the form of general basis input:
@@ -778,11 +778,11 @@ class Gaussian(logfileparser.Logfile):
 #                    line = inputfile.next()
 #                self.vibdisps.extend(p[0:len(broken)/3])
 #                line = inputfile.next() # Should be the line with symmetries
-#            self.vibfreqs = numpy.array(self.vibfreqs, "d")
-#            self.vibirs = numpy.array(self.vibirs, "d")
-#            self.vibdisps = numpy.array(self.vibdisps, "d")
+#            self.vibfreqs = multiarray.array(self.vibfreqs, "d")
+#            self.vibirs = multiarray.array(self.vibirs, "d")
+#            self.vibdisps = multiarray.array(self.vibdisps, "d")
 #            if hasattr(self, "vibramans"):
-#                self.vibramans = numpy.array(self.vibramans, "d")
+#                self.vibramans = multiarray.array(self.vibramans, "d")
                 
         # Electronic transitions.
         if line[1:14] == "Excited State":
@@ -877,7 +877,7 @@ class Gaussian(logfileparser.Logfile):
                 line = inputfile.next()
                 temp = line.strip().split()
                 parts = line.strip().split()                
-            self.etrotats = numpy.array(self.etrotats, "d")
+            self.etrotats = multiarray.array(self.etrotats, "d")
 
         # Number of basis sets functions.
         # Has to deal with lines like:
@@ -939,7 +939,7 @@ class Gaussian(logfileparser.Logfile):
             # Ensure that this is the main calc and not a fragment
             if self.counterpoise != 0: return
 
-            self.aooverlaps = numpy.zeros( (self.nbasis, self.nbasis), "d")
+            self.aooverlaps = multiarray.zeros( (self.nbasis, self.nbasis), "d")
             # Overlap integrals for basis fn#1 are in aooverlaps[0]
             base = 0
             colmNames = inputfile.next()
@@ -956,7 +956,7 @@ class Gaussian(logfileparser.Logfile):
                         self.aooverlaps[i+base, base+j] = k
                 base += 5
                 colmNames = inputfile.next()
-            self.aooverlaps = numpy.array(self.aooverlaps, "d")                    
+            self.aooverlaps = multiarray.array(self.aooverlaps, "d")                    
 
         # Molecular orbital coefficients (mocoeffs).
         # Essentially only produced for SCF calculations.
@@ -975,12 +975,12 @@ class Gaussian(logfileparser.Logfile):
                     # This was continue before refactoring the parsers.
                     #continue # Not going to extract mocoeffs
                 # Need to add an extra array to self.mocoeffs
-                self.mocoeffs.append(numpy.zeros((self.nmo, self.nbasis), "d"))
+                self.mocoeffs.append(multiarray.zeros((self.nmo, self.nbasis), "d"))
             else:
                 beta = False
                 self.aonames = []
                 self.atombasis = []
-                mocoeffs = [numpy.zeros((self.nmo, self.nbasis), "d")]
+                mocoeffs = [multiarray.zeros((self.nmo, self.nbasis), "d")]
 
             base = 0
             self.popregular = False
@@ -1041,7 +1041,7 @@ class Gaussian(logfileparser.Logfile):
 
             self.aonames = []
             self.atombasis = []
-            nocoeffs = numpy.zeros((self.nmo, self.nbasis), "d")
+            nocoeffs = multiarray.zeros((self.nmo, self.nbasis), "d")
 
             base = 0
             self.popregular = False
@@ -1100,7 +1100,7 @@ class Gaussian(logfileparser.Logfile):
         # For FREQ=Anharm, extract anharmonicity constants
         if line[1:40] == "X matrix of Anharmonic Constants (cm-1)":
             Nvibs = len(self.vibfreqs)
-            self.vibanharms = numpy.zeros( (Nvibs, Nvibs), "d")
+            self.vibanharms = multiarray.zeros( (Nvibs, Nvibs), "d")
 
             base = 0
             colmNames = inputfile.next()
@@ -1151,7 +1151,7 @@ class Gaussian(logfileparser.Logfile):
                 line = inputfile.next()
             centers.sort() # Not always in increasing order
             
-            self.coreelectrons = numpy.zeros(self.natom, "i")
+            self.coreelectrons = multiarray.zeros(self.natom, "i")
 
             for center in centers:
                 front = line[:10].strip()

@@ -10,7 +10,7 @@
 
 __revision__ = "$Revision: 1040 $"
 
-import numpy
+import multiarray
 
 import logfileparser
 
@@ -194,7 +194,7 @@ class ORCA(logfileparser.Logfile):
             while line[0:23] != "Convergence Tolerances:":
                 line = inputfile.next()
 
-            self.geotargets = numpy.zeros((5,), "d")
+            self.geotargets = multiarray.zeros((5,), "d")
             for i in range(5):
                 line = inputfile.next()
                 self.geotargets[i] = float(line.split()[-2])
@@ -272,7 +272,7 @@ class ORCA(logfileparser.Logfile):
             
             self.atomcoords.append(atomcoords)
             if not hasattr(self, "atomnos"):
-                self.atomnos = numpy.array(atomnos,'i')
+                self.atomnos = multiarray.array(atomnos,'i')
 
         if line[21:68] == "FINAL ENERGY EVALUATION AT THE STATIONARY POINT":
             text = inputfile.next()
@@ -330,7 +330,7 @@ class ORCA(logfileparser.Logfile):
         if line[0:14] == "OVERLAP MATRIX":
             dashes = inputfile.next()
 
-            self.aooverlaps = numpy.zeros( (self.nbasis, self.nbasis), "d")
+            self.aooverlaps = multiarray.zeros( (self.nbasis, self.nbasis), "d")
             for i in range(0, self.nbasis, 6):
                 if self.progress:
                     self.updateprogress(inputfile, "Overlap")
@@ -349,7 +349,7 @@ class ORCA(logfileparser.Logfile):
 
             dashses = inputfile.next()
 
-            mocoeffs = [ numpy.zeros((self.nbasis, self.nbasis), "d") ]
+            mocoeffs = [ multiarray.zeros((self.nbasis, self.nbasis), "d") ]
             self.aonames = []
             self.atombasis = []
             for n in range(self.natom):
@@ -359,7 +359,7 @@ class ORCA(logfileparser.Logfile):
 
                 if spin == 1:
                     blank = inputfile.next()
-                    mocoeffs.append(numpy.zeros((self.nbasis, self.nbasis), "d"))
+                    mocoeffs.append(multiarray.zeros((self.nbasis, self.nbasis), "d"))
 
                 for i in range(0, self.nbasis, 6):
                     if self.progress:
@@ -441,7 +441,7 @@ class ORCA(logfileparser.Logfile):
             dashes = inputfile.next()
             blank = inputfile.next()
 
-            self.vibfreqs = numpy.zeros((3 * self.natom,),"d")
+            self.vibfreqs = multiarray.zeros((3 * self.natom,),"d")
 
             for i in range(3 * self.natom):
                 line = inputfile.next()
@@ -453,7 +453,7 @@ class ORCA(logfileparser.Logfile):
             header = inputfile.next()
             dashes = inputfile.next()
 
-            self.vibirs = numpy.zeros((3 * self.natom,),"d")
+            self.vibirs = multiarray.zeros((3 * self.natom,),"d")
 
             line = inputfile.next()
             while len(line) > 2:
@@ -467,7 +467,7 @@ class ORCA(logfileparser.Logfile):
             header = inputfile.next()
             dashes = inputfile.next()
 
-            self.vibramans = numpy.zeros((3 * self.natom,),"d")
+            self.vibramans = multiarray.zeros((3 * self.natom,),"d")
 
             line = inputfile.next()
             while len(line) > 2:
