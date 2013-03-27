@@ -1,33 +1,14 @@
-Kivy for IOS
+cclib for IOS
 ============
 
-(This is a work in progress.)
+(This is a work in progress. The goal is to have an easy-to-use version
+of cclib/Python for iOS.
 
-#. Using brew, you can install dependencies::
+#. This is based on kivy-ios. You need developer tools like autoconf,
+   automake, libtool, etc.
 
-    brew install autoconf automake libtool pkg-config mercurial
-    brew link libtool
-    brew link mercurial
+#. For now, only a trimmed-down version of cclib will be attempted. This is
+   because cross-compiling numpy is not straight-foward. It should, however,
+   be possible to compile multiarray (old Numeric) support directly into the 
+   Python interpreter.
 
-#. Install Cython::
-
-    # easy-install method
-    sudo easy_install cython
-
-    # pip method if available (sudo might be needed.)
-    pip install cython
-
-#. Build the whole toolchain with `tools/build_all.sh`
-#. Create an Xcode project for your application with `tools/create-xcode-project.sh test /path/to/app`
-#. Open your newly created Xcode project
-#. Ensure code signing is setup correctly
-#. Click on play
-
-Notes
------
-
-A build phase is added to the project that processes and moves your
-app's files to the Xcode project before every build. If you would like
-to handle this process manually, remove the "Run Script" build phase
-from your target and use `tools/populate-project.sh /path/to/app`
-after every change. You can also change the path to your app by modifying this build phase.
