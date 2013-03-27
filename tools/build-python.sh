@@ -13,10 +13,17 @@ if [ ! -f $CACHEROOT/Python-$IOS_PYTHON_VERSION.tar.bz2 ]; then
     curl http://www.python.org/ftp/python/$IOS_PYTHON_VERSION/Python-$IOS_PYTHON_VERSION.tar.bz2 > $CACHEROOT/Python-$IOS_PYTHON_VERSION.tar.bz2
 fi
 
+# download python and patch if they aren't there
+if [ ! -f $CACHEROOT/Numeric-24.2.tar.gz ]; then
+    curl http://sourceforge.net/projects/numpy/files/Old%20Numeric/24.2/Numeric-24.2.tar.gz/download > $CACHEROOT/Numeric-24.2.tar.gz
+fi
+
 # get rid of old build
 rm -rf $TMPROOT/Python-$IOS_PYTHON_VERSION
 try tar -xjf $CACHEROOT/Python-$IOS_PYTHON_VERSION.tar.bz2
+try tar -xzf $CACHEROOT/Numeric-24.2.tar.gz
 try mv Python-$IOS_PYTHON_VERSION $TMPROOT
+try mv Numeric-24.2 $TMPROOT
 try pushd $TMPROOT/Python-$IOS_PYTHON_VERSION
 
 # Patch Python for temporary reduce PY_SSIZE_T_MAX otherzise, splitting string doesnet work
@@ -27,6 +34,20 @@ try patch -p1 < $KIVYIOSROOT/src/python_files/Python-$IOS_PYTHON_VERSION-static-
 # Copy our setup for modules
 try cp $KIVYIOSROOT/src/python_files/ModulesSetup Modules/Setup.local
 try cp $KIVYIOSROOT/src/python_files/_scproxy.py Lib/_scproxy.py
+
+# Copy Numeric modules
+try cp $TMPROOT/Numeric-24.2/Src/_numpymodule.c Modules/
+try cp $TMPROOT/Numeric-24.2/Src/ufuncobject.c Modules/
+try cp $TMPROOT/Numeric-24.2/Src/multiarraymodule.c Modules/
+try cp $TMPROOT/Numeric-24.2/Src/arrayobject.c Modules/
+try cp $TMPROOT/Numeric-24.2/Src/arraytypes.c Modules/
+try mkdir Modules/Numeric
+try cp $TMPROOT/Numeric-24.2/Include/Numeric/arrayobject.h Modules/Numeric
+try cp $TMPROOT/Numeric-24.2/Include/Numeric/ufuncobject.h Modules/Numeric
+
+# Copy cclib-lite
+try mkdir Lib/cclib
+try cp -R $KIVYIOSROOT/src/cclib-lite/ Lib/cclib/
 
 echo "Building for native machine ============================================"
 

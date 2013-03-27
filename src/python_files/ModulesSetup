@@ -47,3 +47,8 @@ _sqlite3 -DSQLITE_OMIT_LOAD_EXTENSION _sqlite/cache.c _sqlite/microprotocols.c _
 
 # Include expat
 pyexpat expat/xmlparse.c expat/xmlrole.c expat/xmltok.c pyexpat.c -I$(srcdir)/Modules/expat -DHAVE_EXPAT_CONFIG_H -DUSE_PYEXPAT_CAPI
+
+# Include multiarray from Numeric
+_numpy	_numpymodule.c ufuncobject.c
+multiarray multiarraymodule.c arrayobject.c -I./Modules
+
