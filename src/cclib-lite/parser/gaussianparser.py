@@ -576,7 +576,7 @@ class Gaussian(logfileparser.Logfile):
                     # Also, check for consistency if homos was already parsed.
                     HOMO = len(self.moenergies[0])-1
                     if hasattr(self, "homos"):
-                        assert HOMO == self.homos[0]
+                        assert HOMO == int(self.homos[0])
                     else:
                         self.homos = multiarray.array([HOMO], "i")
 
@@ -612,7 +612,7 @@ class Gaussian(logfileparser.Logfile):
                     # Also, check for consistency if homos was already parsed.
                     HOMO = len(self.moenergies[1])-1
                     if len(self.homos) == 2:
-                        assert HOMO == self.homos[1]
+                        assert HOMO == int(self.homos[1])
                     else:
                         self.homos.resize([2])
                         self.homos[1] = HOMO
