@@ -10,7 +10,7 @@
 
 __revision__ = "$Revision: 1026 $"
 
-import re
+import re, math
 
 import multiarray
 
@@ -83,7 +83,7 @@ class Gaussian(logfileparser.Logfile):
         # a restricted calculation. The following has the
         # effect of including each transition twice.
         if hasattr(self, "etsecs") and len(self.homos) == 1:
-            new_etsecs = [[(x[0], x[1], x[2] * multiarray.sqrt(2)) for x in etsec]
+            new_etsecs = [[(x[0], x[1], x[2] * math.sqrt(2)) for x in etsec]
                           for etsec in self.etsecs]
             self.etsecs = new_etsecs
         if hasattr(self, "scanenergies"):
